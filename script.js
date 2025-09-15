@@ -35,43 +35,46 @@ const Game = (() => {
 
   function checkGameStatus() {
     for (let horizontal_i = 0;horizontal_i < 9;horizontal_i++) {
-      if (horizontal_i > 3) {
-        let horizontalConcurrentSigns = "";
+
+      let horizontalConcurrentSigns = "";
+      if (horizontal_i >= 3) {
         horizontalConcurrentSigns = `${horizontalConcurrentSigns}${gameboard[horizontal_i]}`;
-        if ((horizontal_i % 2 === 0 || horizontal_i % 5 === 0 || horizontal_i % 8 === 0) && gameboard[horizontal_i - 3]) {
+        if ((horizontal_i / 2 === 1 || horizontal_i / 5 === 1 || horizontal_i / 8 === 1) && gameboard[horizontal_i - 3]) {
           const initialSign = gameboard[horizontal_i - 3];
           if (horizontalConcurrentSigns === `${initialSign}${initialSign}${initialSign}`) return Player1.sign === initialSign ? Player1.sign : Player2.sign;
         };
       }
 
       if (horizontal_i === 0) {
-        for (let diagonal_i = horizontal_i;diagonal_i < 9;diagonal_i + 4) {
-          let diagonalConcurrentSigns = "";
-          const initialSign = gameboard[horizontal_i];
+        let diagonalConcurrentSigns = "";
+        const initialSign = gameboard[horizontal_i];
+        for (let diagonal_i = horizontal_i;diagonal_i < 9;diagonal_i += 4) {
           diagonalConcurrentSigns = `${diagonalConcurrentSigns}${gameboard[diagonal_i]}`;
-          if (diagonal_i % 8 === 0 && gameboard[diagonal_i]) {
+          if (diagonal_i / 8 === 1 && gameboard[diagonal_i]) {
             if (diagonalConcurrentSigns === `${initialSign}${initialSign}${initialSign}`) return Player1.sign === initialSign ? Player1.sign : Player2.sign;
           }
         }
       }
 
       if (horizontal_i === 2) {
-        for (let diagonal_i = horizontal_i;diagonal_i < 7;diagonal_i + 2) {
-          let diagonalConcurrentSigns = "";
-          const initialSign = gameboard[horizontal_i];
+        let diagonalConcurrentSigns = "";
+        const initialSign = gameboard[horizontal_i];
+        for (let diagonal_i = horizontal_i;diagonal_i < 7;diagonal_i += 2) {
           diagonalConcurrentSigns = `${diagonalConcurrentSigns}${gameboard[diagonal_i]}`;
-          if (diagonal_i % 6 === 0 && gameboard[diagonal_i]) {
+          if (diagonal_i / 6 === 1 && gameboard[diagonal_i]) {
             if (diagonalConcurrentSigns === `${initialSign}${initialSign}${initialSign}`) return Player1.sign === initialSign ? Player1.sign : Player2.sign;
           }
         }
       }
 
-      for (vertical_i = horizontal_i;vertical_i < vertical_i + 7;vertical_i + 3) {
-        let verticalConcurrentSigns = "";
+      let verticalConcurrentSigns = "";
+      if (horizontal_i < 3) {
         const initialSign = gameboard[vertical_i];
-        verticalConcurrentSigns = `${verticalConcurrentSigns}${gameboard[vertical_i]}`;
-        if ((vertical_i % 6 === 0 || vertical_i % 7 === 0 || vertical_i % 0 === 8) && gameboard[vertical_i - 6]) {
-          if (verticalConcurrentSigns === `${initialSign}${initialSign}${initialSign}`) return Player1.sign === initialSign ? Player1.sign : Player2.sign;
+        for (let vertical_i = horizontal_i;vertical_i < vertical_i + 7;vertical_i += 3) {
+          verticalConcurrentSigns = `${verticalConcurrentSigns}${gameboard[vertical_i]}`;
+          if ((vertical_i / 6 === 1 || vertical_i / 7 === 1 || vertical_i / 8 === 1) && gameboard[vertical_i - 6]) {
+            if (verticalConcurrentSigns === `${initialSign}${initialSign}${initialSign}`) return Player1.sign === initialSign ? Player1.sign : Player2.sign;
+          }
         }
       }
     }
