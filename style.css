@@ -1,0 +1,35 @@
+:root {
+  --block-size: 125px;
+
+  font-size: 20px;
+}
+
+body {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: #3b3b3b;
+  background: linear-gradient(180deg, hsl(255, 0%, 10%) 0%, hsl(255, 0%, 20%) 100%);
+  color: white;
+}
+
+.players-score {
+  gap: 2rem;
+  display: flex;
+  align-items: center;
+}
+
+.grid {
+  overflow: hidden;
+  display: grid;
+  grid-template-columns: repeat(3, var(--block-size));
+  grid-template-rows: repeat(3, var(--block-size));
+  gap: 3px;
+  border: 1px white solid;
+}
+
+.block {
+  border: 1px white solid;
+}
