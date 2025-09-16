@@ -35,46 +35,42 @@ const Game = (() => {
   player2.appendChild(player2score);
 
   function someoneDidScore() {
-    let horizontalConcurrentSigns = "";
-    for (let horizontal_i = 0;horizontal_i < 9;horizontal_i++) {
-      if (horizontal_i < 3) {
-        let verticalConcurrentSigns = "";
-        const initialSign = gameboard[horizontal_i];
-        for (let vertical_i = horizontal_i;vertical_i <= horizontal_i + 6;vertical_i += 3) {
-          verticalConcurrentSigns = `${verticalConcurrentSigns}${gameboard[vertical_i]}`;
-          if ((vertical_i / 6 === 1 || vertical_i / 7 === 1 || vertical_i / 8 === 1) &&
-            initialSign &&
-            verticalConcurrentSigns === `${initialSign}${initialSign}${initialSign}`)
-            return Player1.sign === initialSign ? Player1.sign : Player2.sign;
-        }
-      }
+    let signChecker = "";
 
-      if (horizontal_i === 0) {
-        let diagonalConcurrentSigns = "";
-        const initialSign = gameboard[horizontal_i];
-        for (let diagonal_i = horizontal_i;diagonal_i <= 8;diagonal_i += 4) {
-          diagonalConcurrentSigns = `${diagonalConcurrentSigns}${gameboard[diagonal_i]}`;
-          if (diagonal_i / 8 === 1 && initialSign && diagonalConcurrentSigns === `${initialSign}${initialSign}${initialSign}`)
-            return Player1.sign === initialSign ? Player1.sign : Player2.sign;
-        }
-      }
+    const loopLogic = (i) => {
+      if (signChecker.includes(`${Player1.sign}${Player1.sign}${Player1.sign}`) || signChecker.includes(`${Player2.sign}${Player2.sign}${Player2.sign}`))
+        return signChecker;
 
-      if (horizontal_i === 2) {
-        let diagonalConcurrentSigns = "";
-        const initialSign = gameboard[horizontal_i];
-        for (let diagonal_i = horizontal_i;diagonal_i <= 6;diagonal_i += 2) {
-          diagonalConcurrentSigns = `${diagonalConcurrentSigns}${gameboard[diagonal_i]}`;
-          if (diagonal_i / 6 === 1 && initialSign && diagonalConcurrentSigns === `${initialSign}${initialSign}${initialSign}`)
-            return Player1.sign === initialSign ? Player1.sign : Player2.sign;
-        }
-      }
+      if (signChecker.length === 3) signChecker = "";
+      if (gameboard[i] !== 0 || gameboard[i] !== undefined) signChecker += gameboard[i];
+    };
 
-      horizontalConcurrentSigns = `${horizontalConcurrentSigns}${gameboard[horizontal_i]}`;
-      const initialSign = gameboard[horizontal_i - 2];
-      if ((horizontal_i / 2 === 1 || horizontal_i / 5 === 1 || horizontal_i / 8 === 1) &&
-        initialSign &&
-        horizontalConcurrentSigns === `${initialSign}${initialSign}${initialSign}`)
-        return Player1.sign === initialSign ? Player1.sign : Player2.sign;
+    // Horizontal Grid Check
+    for (let i = 0;i < gameboard.length;i++) {
+      const text = loopLogic(i);
+      if (text != undefined) return text;
+    }
+
+    // Vertical Grid Check
+    for (let i = 0;i <= 2;i++) {
+      let text = loopLogic(i);
+      if (text !== undefined) return text;
+      for (let j = 3 + i;j <= 6 + i;j += 3) {
+        text = loopLogic(j);
+        if (text !== undefined) return text;
+      }
+    }
+
+    // Top-left Diagonal Grid Check
+    for (let i = 0;i <= 8;i += 4) {
+      const text = loopLogic(i);
+      if (text !== undefined) return text;
+    }
+
+    // Top-right Diagonal Grid Check
+    for (let i = 2;i <= 8;i += 2) {
+      const text = loopLogic(i);
+      if (text !== undefined) return text;
     }
   }
 
