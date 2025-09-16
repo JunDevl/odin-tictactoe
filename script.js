@@ -37,55 +37,49 @@ const Game = (() => {
   function someoneDidScore() {
     let signChecker = "";
 
-    const loopLogic = (i) => {
+    function checkPlayerSign(sign) { return Player1.sign === sign ? Player1 : Player2; }
+
+    function loopLogic(i) {
       if (signChecker.includes(`${Player1.sign}${Player1.sign}${Player1.sign}`) || signChecker.includes(`${Player2.sign}${Player2.sign}${Player2.sign}`))
         return signChecker;
 
       if (signChecker.length === 3) signChecker = "";
-      if (gameboard[i] !== 0 || gameboard[i] !== undefined) signChecker += gameboard[i];
+      if (gameboard[i] !== 0 || gameboard[i] !== null) signChecker += gameboard[i];
     };
 
     // Horizontal Grid Check
     for (let i = 0;i < gameboard.length;i++) {
       const text = loopLogic(i);
-      if (text != undefined) return text;
+      if (text !== undefined) return checkPlayerSign(text[0]);
     }
 
     // Vertical Grid Check
     for (let i = 0;i <= 2;i++) {
       let text = loopLogic(i);
-      if (text !== undefined) return text;
+      if (text !== undefined) return checkPlayerSign(text[0]);
       for (let j = 3 + i;j <= 6 + i;j += 3) {
         text = loopLogic(j);
-        if (text !== undefined) return text;
+        if (text !== undefined) return checkPlayerSign(text[0]);
       }
     }
 
     // Top-left Diagonal Grid Check
     for (let i = 0;i <= 8;i += 4) {
       const text = loopLogic(i);
-      if (text !== undefined) return text;
+      if (text !== undefined) return checkPlayerSign(text[0]);
     }
 
     // Top-right Diagonal Grid Check
     for (let i = 2;i <= 8;i += 2) {
       const text = loopLogic(i);
-      if (text !== undefined) return text;
+      if (text !== undefined) return checkPlayerSign(text[0]);
     }
   }
 
-  function getPlayerScore(playerSign) {
-    return Player1.sign === playerSign ? Player1.score : Player2.score;
-  }
-
-  function increasePlayerScore(playerSign) {
-    return Player1.sign === playerSign ? Player1.score++ : Player2.score++;
-  }
-
-  function updateGameboard(playerSign, blockElementID) {
+  function updateGameboard(blockElementID) {
     if (gameboard[+blockElementID - 1]) return;
 
-    gameboard[+blockElementID - 1] = playerSign;
+    gameboard[+blockElementID - 1] = turn;
 
     turn = turn === "x" ? "o" : "x";
   }
@@ -95,7 +89,7 @@ const Game = (() => {
 
     if (!playerScored) return false;
 
-    increasePlayerScore(playerScored);
+    playerScored.score++;
 
     player1score.textContent = Player1.score;
     player2score.textContent = Player2.score;
@@ -105,7 +99,7 @@ const Game = (() => {
     return true;
   }
 
-  function getCurrentTurn() {
+  function getCurrentSignTurn() {
     return turn;
   }
 
@@ -113,10 +107,13 @@ const Game = (() => {
     Player1.score = 0;
     Player2.score = 0;
 
+    player1score.textContent = Player1.score;
+    player2score.textContent = Player2.score;
+
     gameboard = gameboard.map((item) => { return null; });
   }
 
-  return { getPlayerScore, increasePlayerScore, updateGameboard, someoneScored, getCurrentTurn, reset };
+  return { updateGameboard, someoneScored, getCurrentSignTurn, reset };
 })();
 
 const player1score = document.querySelector("#score-p1");
@@ -127,9 +124,9 @@ board.addEventListener("click", (e) => {
 
   if (e.target.textContent !== "") return;
 
-  e.target.textContent = Game.getCurrentTurn();
+  e.target.innerHTML = Game.getCurrentSignTurn() === "x" ? "&Cross;" : "&cir;";
 
-  Game.updateGameboard(e.target.textContent, e.target.id);
+  Game.updateGameboard(e.target.id);
 
   if (Game.someoneScored()) blocks.forEach((elem) => elem.textContent = "");
 });
