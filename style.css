@@ -32,4 +32,8 @@ body {
 
 .block {
   border: 1px white solid;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 3rem;
 }
