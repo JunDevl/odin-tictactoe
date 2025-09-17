@@ -9,6 +9,9 @@ const player2Name = prompt("Okay, now inform the name of the second player:");
 
 const blocks = document.querySelectorAll(".block");
 
+const winner = document.querySelector(".winner");
+const playAgain = document.querySelector("#play-again");
+
 const Game = (() => {
   function generatePlayer(sign, name) {
     return { sign, name, score: 0 };
@@ -18,6 +21,8 @@ const Game = (() => {
   let Player2 = generatePlayer("o", player2Name);
 
   let turn = "x";
+
+  let winner = "";
 
   let gameboard = [];
   for (let i = 0;i < 9;i++) gameboard.push(null);
@@ -37,42 +42,44 @@ const Game = (() => {
   function someoneDidScore() {
     let signChecker = "";
 
-    function checkPlayerSign(sign) { return Player1.sign === sign ? Player1 : Player2; }
+    function checkPlayer(sign) {
+      return Player1.sign === sign ? Player1 : Player2;
+    }
 
     function loopLogic(i) {
       if (signChecker.includes(`${Player1.sign}${Player1.sign}${Player1.sign}`) || signChecker.includes(`${Player2.sign}${Player2.sign}${Player2.sign}`))
-        return signChecker;
+        return signChecker[0];
 
-      if (signChecker.length === 3) signChecker = "";
+      if (signChecker.length >= 3) signChecker = "";
       if (gameboard[i] !== 0 || gameboard[i] !== null) signChecker += gameboard[i];
     };
 
     // Horizontal Grid Check
     for (let i = 0;i < gameboard.length;i++) {
       const text = loopLogic(i);
-      if (text !== undefined) return checkPlayerSign(text[0]);
+      if (text !== undefined) return checkPlayer(text);
     }
 
     // Vertical Grid Check
     for (let i = 0;i <= 2;i++) {
       let text = loopLogic(i);
-      if (text !== undefined) return checkPlayerSign(text[0]);
+      if (text !== undefined) return checkPlayer(text);
       for (let j = 3 + i;j <= 6 + i;j += 3) {
         text = loopLogic(j);
-        if (text !== undefined) return checkPlayerSign(text[0]);
+        if (text !== undefined) return checkPlayer(text);
       }
     }
 
     // Top-left Diagonal Grid Check
     for (let i = 0;i <= 8;i += 4) {
       const text = loopLogic(i);
-      if (text !== undefined) return checkPlayerSign(text[0]);
+      if (text !== undefined) return checkPlayer(text);
     }
 
     // Top-right Diagonal Grid Check
     for (let i = 2;i <= 8;i += 2) {
       const text = loopLogic(i);
-      if (text !== undefined) return checkPlayerSign(text[0]);
+      if (text !== undefined) return checkPlayer(text);
     }
   }
 
@@ -95,6 +102,7 @@ const Game = (() => {
     player2score.textContent = Player2.score;
 
     gameboard = gameboard.map((item) => { return null; });
+    winner = playerScored.name;
 
     return true;
   }
@@ -103,35 +111,63 @@ const Game = (() => {
     return turn;
   }
 
-  function reset() {
+  function getWinner() {
+    return winner;
+  }
+
+  function resetSet() {
+    winner = "";
+    gameboard = gameboard.map((item) => { return null; });
+    blocks.forEach((elem) => elem.textContent = "");
+  }
+
+  function resetAll() {
     Player1.score = 0;
     Player2.score = 0;
 
     player1score.textContent = Player1.score;
     player2score.textContent = Player2.score;
 
+    winner = "";
     gameboard = gameboard.map((item) => { return null; });
+    blocks.forEach((elem) => elem.textContent = "");
   }
 
-  return { updateGameboard, someoneScored, getCurrentSignTurn, reset };
+  return { updateGameboard, someoneScored, getCurrentSignTurn, getWinner, resetSet, resetAll };
 })();
 
 const player1score = document.querySelector("#score-p1");
 const player2score = document.querySelector("#score-p2");
 
 board.addEventListener("click", (e) => {
-  if (e.target.className !== "block") return;
+  if (e.target.className !== "block" || e.target.textContent !== "" || Game.getWinner()) return;
 
-  if (e.target.textContent !== "") return;
-
-  e.target.innerHTML = Game.getCurrentSignTurn() === "x" ? "&Cross;" : "&cir;";
+  e.target.innerHTML = Game.getCurrentSignTurn() === "x" ? "<span>&times;<span/>" : "<span>&cir;<span/>";
 
   Game.updateGameboard(e.target.id);
 
-  if (Game.someoneScored()) blocks.forEach((elem) => elem.textContent = "");
+  if (Game.someoneScored()) {
+    winner.style.display = "block";
+    playAgain.style.display = "block";
+
+    winner.firstElementChild.textContent = Game.getWinner();
+  };
+});
+
+playAgain.addEventListener("click", () => {
+  Game.resetSet();
+
+  winner.style.display = "none";
+  playAgain.style.display = "none";
+
+  winner.firstElementChild.textContent = "";
 });
 
 reset.addEventListener("click", () => {
-  Game.reset();
-  blocks.forEach((elem) => elem.textContent = "");
+  Game.resetAll();
+
+  winner.style.display = "none";
+  playAgain.style.display = "none";
+
+  winner.firstElementChild.textContent = "";
 });
