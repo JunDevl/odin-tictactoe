@@ -1,3 +1,12 @@
+@font-face {
+  font-family: 'Roboto';
+  src: url('fonts/Roboto-Regular.woff2') format('woff2'),
+    url('fonts/Roboto-Regular.woff') format('woff');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
 :root {
   --block-size: 125px;
 
@@ -6,6 +15,7 @@
   --primary-color-hover: hsl(219, 88%, 58%);
 
   font-size: 20px;
+  font-family: 'Roboto', sans-serif;
 }
 
 body {
@@ -33,6 +43,7 @@ body {
   padding: 15px;
   border-radius: 15px;
   transition: 100ms ease-in-out;
+  margin-bottom: 1rem;
 }
 
 .reset:hover {
@@ -48,9 +59,10 @@ body {
 }
 
 .players-score {
-  gap: 2rem;
+  gap: 3rem;
   display: flex;
   align-items: center;
+  margin-bottom: 0.5rem;
 }
 
 .grid {
@@ -84,6 +96,8 @@ body {
   animation-name: grow;
   animation-timing-function: cubic-bezier(0.215, 0.610, 0.355, 1);
   animation-duration: 300ms;
+  animation-direction: alternate;
+  font-family: 'Times New Roman', Times, serif;
 }
 
 .win-container {

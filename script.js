@@ -1,14 +1,6 @@
 const reset = document.querySelector(".reset");
 const board = document.querySelector(".grid");
 
-const player1 = document.querySelector(".player1");
-const player2 = document.querySelector(".player2");
-
-const player1Name = prompt("Please, inform the name of the first player:");
-const player2Name = prompt("Okay, now inform the name of the second player:");
-
-const blocks = document.querySelectorAll(".block");
-
 const winner = document.querySelector(".winner");
 const playAgain = document.querySelector("#play-again");
 
@@ -17,27 +9,46 @@ const Game = (() => {
     return { sign, name, score: 0 };
   }
 
-  let Player1 = generatePlayer("x", player1Name);
-  let Player2 = generatePlayer("o", player2Name);
+  let Player1 = {};
+  let Player2 = {};
 
   let turn = "x";
 
   let winner = "";
 
   let gameboard = [];
-  for (let i = 0;i < 9;i++) gameboard.push(null);
 
-  player1.textContent = `${Player1.name} Score: `;
-  const player1score = document.createElement("span");
-  player1score.id = "score-p1";
-  player1score.textContent = Player1.score;
-  player1.appendChild(player1score);
+  function init() {
+    let player1Name = prompt("Please, inform the name of the first player:");
+    while (!player1Name) player1Name = prompt(`Filling in your name is mandatory.`);
 
-  player2.textContent = `${Player2.name} Score: `;
-  const player2score = document.createElement("span");
-  player2score.id = "score-p2";
-  player2score.textContent = Player2.score;
-  player2.appendChild(player2score);
+    let player2Name = prompt("Okay, now inform the name of the second player:");
+    while (!player1Name) player2Name = prompt(`Filling in your name is mandatory.`);
+
+    Player1 = generatePlayer("x", player1Name);
+    Player2 = generatePlayer("o", player2Name);
+
+    player1Element.textContent = `${Player1.name} Score: `;
+    const player1score = document.createElement("span");
+    player1score.id = "score-p1";
+    player1score.textContent = Player1.score;
+    player1Element.appendChild(player1score);
+
+    player2Element.textContent = `${Player2.name} Score: `;
+    const player2score = document.createElement("span");
+    player2score.id = "score-p2";
+    player2score.textContent = Player2.score;
+    player2Element.appendChild(player2score);
+  }
+
+  const blocks = document.querySelectorAll(".block");
+
+  const player1Element = document.querySelector(".player1");
+  const player2Element = document.querySelector(".player2");
+
+  init();
+
+  for (let i = 0;i < gameboard.length;i++) gameboard.push(null);
 
   function someoneDidScore() {
     let signChecker = "";
@@ -77,7 +88,7 @@ const Game = (() => {
     }
 
     // Top-right Diagonal Grid Check
-    for (let i = 2;i <= 8;i += 2) {
+    for (let i = 2;i <= 6;i += 2) {
       const text = loopLogic(i);
       if (text !== undefined) return checkPlayer(text);
     }
